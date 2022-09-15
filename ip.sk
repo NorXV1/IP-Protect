@@ -1,0 +1,107 @@
+options:
+	prefix: &8[&cIP&7-&cProtect&8]
+
+on load:
+	if folder "plugins/IP-Protect" doesn't exists: 
+		create folder "plugins/IP-Protect"
+	if file "plugins/IP-Protect/Command.log" doesn't exists: 
+		create file "plugins/IP-Protect/Command.log"
+
+
+on first join:
+	set {ip.type.%player%} to "null"
+	clear {ip.pl.%player%}
+
+
+command /§ip:
+	trigger:
+		open chest with 1 rows named "&c&lSécurisation par IP" to player
+		format slot 0 of player with black stained glass named "&8" to be unstealable
+		format slot 1 of player with black stained glass named "&8" to be unstealable
+		format slot 2 of player with emerald named "&aIP Unique" with lore "&eCela signifie que vous ne pourrez pas vous connecter si votre ip change !" to close then run [make player execute command "§unique"]
+		format slot 3 of player with black stained glass named "&8" to be unstealable
+		format slot 4 of player with black stained glass named "&8" to be unstealable
+		format slot 5 of player with diamond named "&cIP Multiple" with lore "&bAvec ceci n'importe qui aura accès au compte avec le mdp même si ce n'est pas vous !" to close then run [make player execute command "§dyna"]
+		format slot 6 of player with black stained glass named "&8" to be unstealable
+		format slot 7 of player with black stained glass named "&8" to be unstealable
+		format slot 8 of player with black stained glass named "&8" to be unstealable
+		wait 15 seconds
+		if {ip.type.%player%} is "null":
+		kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
+		
+
+command /§unique:
+	trigger:
+		if {ip.type.%player%} is "null":
+			set {ip.type.%player%} to "uni"
+			send "{@prefix} &aVous êtes maintenant en connexion par &a&lIP Unique&a."
+			set {ip.pl.%player%} to "%ip of player%"
+			wait 1 second
+			kick player due to "{@prefix} &cMerci de vous reconnecter."
+	
+
+command /§dyna:
+	trigger:
+		if {ip.type.%player%} is "null":
+			set {ip.type.%player%} to "dyna"
+			send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
+			wait 1 second
+			kick player due to "{@prefix}  &cMerci de vous reconnecter."
+
+
+on join:
+	loop all players:
+		if loop-player has permission "login.chat":
+			if {ip.type.%player%} is "uni":
+				if {ip.pl.%player%} == "%ip of player%":
+					wait 2 seconds
+					send "{@prefix}  &aVous êtes en règle bon jeu."
+				else:
+					wait 1 second
+					kick player due to "{@prefix}  &cVous n'avez pas la bonne IP de connexion."
+					send "{@prefix}  &cUne connexion suspecte c'est effectué sur le compte de %player% &7[ &aIP Unique &7] &8- &7[ &c%now% &7]" to loop-player
+
+					wf "[IP-Protect | %now% ] || Joueur: %player% || Status: IP Unique || Raison: Connexion suspecte détecté." to "plugins/IP-Protect/Command.log"
+					wf " " to "plugins/IP-Protect/Command.log"
+
+			else if {ip.type.%player%} is "dyna":
+				send "{@prefix}  &cVous ne possedez pas de sécurité. Bon jeu."
+			else if {ip.type.%player%} is "null":
+				wait 1 second
+				make player execute command "§ip"
+
+
+command /ipp [<text>] [<offline player>]:
+	trigger:
+		if player is op:
+			if arg 1 is "show":
+				if arg 2 is set:
+					if {ip.type.%arg 2%} is "uni":
+						send "{@prefix}  &cVoici le status de %arg 2% &e➜ &aIP Unique."
+					else if {ip.type.%arg 2%} is "dyna":
+						send "{@prefix}  &cVoici le status de %arg 2% &e➜ &aIP Dynamique."
+					else if {ip.type.%arg 2%} is "null":
+						send "{@prefix}  &e%arg 2% &cn'est pas encore venu faire ses premier pas."
+				else:
+					send "{@prefix}  &cVeuillez choisir un personne." 
+			if arg 1 is "reset":
+				if arg 2 is set:
+					if {ip.type.%arg 2%} is "uni" or "dyna":
+						send "{@prefix}  &cVous venez de réinitialiser la protection de %arg 2%." to player
+						set {ip.type.%arg 2%} to "null"
+						if arg 2 is online:
+							kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
+					else: 
+						send "{@prefix}  &cN'as pas encore fait ses premier pas."
+				else:
+					send "{@prefix}  &cVous devez choisir une personne."
+			if arg 1 is "rl":
+				execute console command "/sk reload ip"
+				wait 2 seconds
+				send "{@prefix} &aSkript IP-Protect Reload avec succès."
+			if arg 1 isn't set:
+				send "{@prefix}  &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+		else:
+			send "{@prefix}  &cVous ne possedez pas les permission nécessaire."
+
+
