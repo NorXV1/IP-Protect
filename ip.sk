@@ -182,9 +182,3 @@ command /ipp [<text>] [<offline player>]:
 				send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
 		else:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
-
-
-command /t:
-	trigger:
-		set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
-		send "%{_update}%"
