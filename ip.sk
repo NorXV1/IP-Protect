@@ -7,7 +7,7 @@ on load:
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
 	set "Update.Version" to "1.3" in yaml file "plugins/IP-Protect/config.yml"
-	set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
 	if file "plugins/IP-Protect/Command.log" doesn't exists: 
