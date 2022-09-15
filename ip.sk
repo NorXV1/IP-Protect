@@ -2,10 +2,18 @@ options:
 	prefix: &8[&cIP&7-&cProtect&8]
 
 on load:
+	create file "plugins/IP-Protect/config.yml"
+
+	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
+
+	set "Update.Version" to "1.1" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
 	if file "plugins/IP-Protect/Command.log" doesn't exists: 
 		create file "plugins/IP-Protect/Command.log"
+	
+
 
 
 on first join:
@@ -27,7 +35,7 @@ command /§ip:
 		format slot 8 of player with black stained glass named "&8" to be unstealable
 		wait 15 seconds
 		if {ip.type.%player%} is "null":
-		kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
+			kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
 		
 
 command /§unique:
@@ -46,7 +54,7 @@ command /§dyna:
 			set {ip.type.%player%} to "dyna"
 			send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
 			wait 1 second
-			kick player due to "{@prefix}  &cMerci de vous reconnecter."
+			kick player due to "{@prefix} &cMerci de vous reconnecter."
 
 
 on join:
@@ -54,21 +62,35 @@ on join:
 		if loop-player has permission "login.chat":
 			if {ip.type.%player%} is "uni":
 				if {ip.pl.%player%} == "%ip of player%":
-					wait 2 seconds
-					send "{@prefix}  &aVous êtes en règle bon jeu."
+					stop
 				else:
 					wait 1 second
-					kick player due to "{@prefix}  &cVous n'avez pas la bonne IP de connexion."
-					send "{@prefix}  &cUne connexion suspecte c'est effectué sur le compte de %player% &7[ &aIP Unique &7] &8- &7[ &c%now% &7]" to loop-player
+					kick player due to "{@prefix} &cVous n'avez pas la bonne IP de connexion."
+					send "{@prefix} &cUne connexion suspecte c'est effectué sur le compte de %player% &7[ &aIP Unique &7] &8- &7[ &c%now% &7]" to loop-player
 
 					wf "[IP-Protect | %now% ] || Joueur: %player% || Status: IP Unique || Raison: Connexion suspecte détecté." to "plugins/IP-Protect/Command.log"
 					wf " " to "plugins/IP-Protect/Command.log"
 
 			else if {ip.type.%player%} is "dyna":
-				send "{@prefix}  &cVous ne possedez pas de sécurité. Bon jeu."
+				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
 			else if {ip.type.%player%} is "null":
 				wait 1 second
 				make player execute command "§ip"
+
+on connect:
+	if player has permission "*":
+		wait 3 seconds
+		set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+		set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+		set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+		if {_ver} is not "%{_version}%":
+			send "&f"
+			send "{@prefix} &cMise à jour disponible ! &f(&aVersion &b➜ &6%{_ver}%&f)" 
+			send "&f"
+		else:
+			send "&f"
+			send "{@prefix} &aAucune mise à jour disponible."
+			send "&f"
 
 
 command /ipp [<text>] [<offline player>]:
@@ -77,13 +99,13 @@ command /ipp [<text>] [<offline player>]:
 			if arg 1 is "show":
 				if arg 2 is set:
 					if {ip.type.%arg 2%} is "uni":
-						send "{@prefix}  &cVoici le status de %arg 2% &e➜ &aIP Unique."
+						send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Unique."
 					else if {ip.type.%arg 2%} is "dyna":
-						send "{@prefix}  &cVoici le status de %arg 2% &e➜ &aIP Dynamique."
+						send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Dynamique."
 					else if {ip.type.%arg 2%} is "null":
-						send "{@prefix}  &e%arg 2% &cn'est pas encore venu faire ses premier pas."
+						send "{@prefix} &e%arg 2% &cn'est pas encore venu faire ses premier pas."
 				else:
-					send "{@prefix}  &cVeuillez choisir un personne." 
+					send "{@prefix} &cVeuillez choisir un personne." 
 			if arg 1 is "reset":
 				if arg 2 is set:
 					if {ip.type.%arg 2%} is "uni" or "dyna":
@@ -92,16 +114,37 @@ command /ipp [<text>] [<offline player>]:
 						if arg 2 is online:
 							kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
 					else: 
-						send "{@prefix}  &cN'as pas encore fait ses premier pas."
+						send "{@prefix} &cN'as pas encore fait ses premier pas."
 				else:
-					send "{@prefix}  &cVous devez choisir une personne."
+					send "{@prefix} &cVous devez choisir une personne."
 			if arg 1 is "rl":
 				execute console command "/sk reload ip"
 				wait 2 seconds
 				send "{@prefix} &aSkript IP-Protect Reload avec succès."
+			if arg 1 is "maj":
+				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+				set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+				set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+				if {_ver} is not "%{_version}%":
+					if {_update} = "true":
+						if file "plugins/Skript/scripts/ip.sk" exists:
+							send "{@prefix} &eMise à jour en cours !"
+							delete file "plugins/IP-Protect/config.yml"
+							delete file "plugins/Skript/scripts/ip.sk" 
+							wait 5 ticks
+							create file "plugins/Skript/scripts/ip.sk"
+							download from "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ip.sk" to "plugins/Skript/scripts/ip.sk"
+							wait 5 seconds
+							execute console command "/sk reload /ip.sk"
+							send "{@prefix} &6Mise à jour terminé !"
+					else:
+						send "{@prefix} &cLa mise à jour Automatique est désactivé !" 
+						send "%{_update}%"
+				else:
+					send "{@prefix} &aAucune mise à jour disponible."
 			if arg 1 isn't set:
-				send "{@prefix}  &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+				send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
 		else:
-			send "{@prefix}  &cVous ne possedez pas les permission nécessaire."
+			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
 
 
