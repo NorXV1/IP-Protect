@@ -1,12 +1,13 @@
 options:
 	prefix: &8[&cIP&7-&cProtect&8] &6➡
+	prefixa: &8[&cIP&7-&cProtect &3[ADMIN]&8] &6➡
 
 on load:
 	create file "plugins/IP-Protect/config.yml"
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "1.4" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "1.5" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -179,6 +180,11 @@ command /ipp [<text>] [<offline player>]:
 					set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
 					send "{@prefix} &aVous venez de modifier la config de update en false."
 			if arg 1 isn't set:
-				send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+				if player isn't op:
+					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+				else:
+					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+					wait 2 seconds
+					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 		else:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
