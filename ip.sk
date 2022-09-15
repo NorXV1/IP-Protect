@@ -6,7 +6,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "1.2" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "1.3" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -143,9 +143,9 @@ command /ipp [<text>] [<offline player>]:
 				else:
 					send "{@prefix} &aAucune mise à jour disponible."
 			if arg 1 is "config":
-				set {_update} to single value "Update.Update" get of "plugins/Booster/config.yml"
+				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
 
-				set {_ver} to single value "Update.Version" get of "plugins/Booster/config.yml"
+				set {_ver} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
 
 				wait 1 tick
 
