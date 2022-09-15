@@ -139,7 +139,6 @@ command /ipp [<text>] [<offline player>]:
 							send "{@prefix} &6Mise à jour terminé !"
 					else:
 						send "{@prefix} &cLa mise à jour Automatique est désactivé !" 
-						send "%{_update}%"
 				else:
 					send "{@prefix} &aAucune mise à jour disponible."
 			if arg 1 is "config":
