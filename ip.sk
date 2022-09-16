@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "1.8" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "1.9" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -164,6 +164,8 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&8"
 
+				message "&8"
+
 				if {_update} is "true":
 
 					message "&l&6   Update: &a%{_update}%"
@@ -172,13 +174,9 @@ command /ipp [<text>] [<offline player>]:
 
 					message "&l&6   Update: &c%{_update}%"
 
-				if {_ver} is not "%{_version}%":
+				message "&8"
 
-					message "&l&6   Version: &c%{_ver}%"
-
-				else:
-
-					message "&l&6   Version: &a%{_ver}%"
+				message "&l&6   Version: &c%{_ver}%"
 
 				message "&8"
 
