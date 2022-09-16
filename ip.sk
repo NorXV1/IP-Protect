@@ -15,16 +15,20 @@ on load:
 		create file "plugins/IP-Protect/Command.log"
 	
 
-
-
 on first join:
 	set {ip.type.%player%} to "null"
-	clear {ip.pl.%player%}
+	clear {ip.pl.%player%} #Juste pour l'IP Unique
 
+
+#on connect:
+#	if {ip.type.%player%} isn't set:
+#		set {ip.type.%player%} to "null"
+#		kick player due to "{@prefix} &cMerci de vous reconnecter."
 
 command /§ip:
 	trigger:
 		open chest with 1 rows named "&c&lSécurisation par IP" to player
+		wait 2 ticks
 		format slot 0 of player with black stained glass named "&8" to be unstealable
 		format slot 1 of player with black stained glass named "&8" to be unstealable
 		format slot 2 of player with emerald named "&aIP Unique" with lore "&eCela signifie que vous ne pourrez pas vous connecter si votre ip change !" to close then run [make player execute command "§unique"]
@@ -157,9 +161,21 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&8"
 
-				message "&l&6   Update: &c%{_update}%"
+				if {_update} is "true":
 
-				message "&l&6   Version: &c%{_ver}%"
+					message "&l&6   Update: &a%{_update}%"
+
+				else if {_update} is "false":
+
+					message "&l&6   Update: &c%{_update}%"
+
+				if {_ver} is not "%{_version}%":
+
+					message "&l&6   Version: &c%{_ver}%"
+
+				else:
+
+					message "&l&6   Version: &a%{_ver}%"
 
 				message "&8"
 
