@@ -7,12 +7,22 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.5" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.6" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
 	if file "plugins/IP-Protect/Command.log" doesn't exists: 
 		create file "plugins/IP-Protect/Command.log"
+
+	send "&8&m-------------------------" to console
+	send "&8" to console
+	send "&f     ┌ &8[&cIP&7-&cProtect&8] &f┐" to console
+	send "&8" to console
+	send "&8" to console
+	send "&6  Skript Dev par RavenS" to console
+	send "&8" to console
+	send "&8&m-------------------------" to console
+
 	
 
 on first join:
@@ -144,16 +154,13 @@ command /ipp [<text>] [<offline player>]:
 							wait 2 seconds
 							send "{@prefix} &bVérification en cours..."
 							wait 1 second
-
-							set {_versionss} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
-							set {_verss} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+							set {_version.maj} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+							set {_ver.maj} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
 							wait 2 ticks
-							
-							if {_verss} = {_versionss}:			
+							if {_ver.maj} = {_version.maj}:			
 								send "{@prefix} &6Mise à jour terminé !"
 							else:
 								send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
-								send "%{_verss}% & %{_versionss}%"
 					else:
 						send "{@prefix} &cLe système de mise à jour est désactivé !" 
 				else:
