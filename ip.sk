@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.2" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.3" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -142,10 +142,13 @@ command /ipp [<text>] [<offline player>]:
 							wait 5 seconds
 							execute console command "/sk reload /ip.sk"
 							wait 2 seconds
+							send "{@prefix} &bVérification en cours..."
+							wait 1 second
 							if {_ver} = {_version}:				
 								send "{@prefix} &6Mise à jour terminé !"
 							else:
 								send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
+								send "%{_ver}% & %{_version}%"
 					else:
 						send "{@prefix} &cLe système de mise à jour est désactivé !" 
 				else:
