@@ -153,7 +153,7 @@ command /ipp [<text>] [<offline player>]:
 								send "{@prefix} &6Mise à jour terminé !"
 							else:
 								send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
-								send "%{_ver}% & %{_version}%"
+								send "%{_verss}% & %{_versionss}%"
 					else:
 						send "{@prefix} &cLe système de mise à jour est désactivé !" 
 				else:
