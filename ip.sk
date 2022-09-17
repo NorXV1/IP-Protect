@@ -213,16 +213,3 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 		else:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
-
-command /t:
-	trigger:
-		set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
-
-		set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
-		if {_version} = {_ver}: 
-
-			message "&l&6   Version: &a%{_version}%"
-
-		else:
-
-			message "&l&6   Version: &c%{_version}%"
