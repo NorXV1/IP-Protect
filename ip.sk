@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.1" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.2" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -141,6 +141,7 @@ command /ipp [<text>] [<offline player>]:
 							download from "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ip.sk" to "plugins/Skript/scripts/ip.sk"
 							wait 5 seconds
 							execute console command "/sk reload /ip.sk"
+							wait 2 seconds
 							if {_ver} = {_version}:				
 								send "{@prefix} &6Mise à jour terminé !"
 							else:
