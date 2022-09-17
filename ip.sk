@@ -147,7 +147,7 @@ command /ipp [<text>] [<offline player>]:
 							else:
 								send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
 					else:
-						send "{@prefix} &cLa mise à jour Automatique est désactivé !" 
+						send "{@prefix} &cLe système de mise à jour est désactivé !" 
 				else:
 					send "{@prefix} &aAucune mise à jour disponible."
 			if arg 1 is "config":
@@ -194,14 +194,14 @@ command /ipp [<text>] [<offline player>]:
 			if arg 1 is "true":
 				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
 				if {_update} is "true":
-					send "{@prefix} &cL'auto Update est déjà en true."
+					send "{@prefix} &cLe système  d'Update est déjà en true."
 				else:
 					set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 					send "{@prefix} &aVous venez de modifier la config de update en true."
 			if arg 1 is "false":
 				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
 				if {_update} is "false":
-					send "{@prefix} &cL'auto Update est déjà en false."
+					send "{@prefix} &cLe système d'Update est déjà en false."
 				else:
 					set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
 					send "{@prefix} &aVous venez de modifier la config de update en false."
