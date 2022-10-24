@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.6" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.7" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -26,7 +26,7 @@ on load:
 	
 
 on first join:
-	set {ip.type.%player%} to "null"
+	clear {ip.type.%player%}
 	clear {ip.pl.%player%} #Juste pour l'IP Unique
 
 
@@ -49,13 +49,13 @@ command /§ip:
 		format slot 7 of player with black stained glass named "&8" to be unstealable
 		format slot 8 of player with black stained glass named "&8" to be unstealable
 		wait 15 seconds
-		if {ip.type.%player%} is "null":
+		if {ip.type.%player%} isn't set:
 			kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
 		
 
 command /§unique:
 	trigger:
-		if {ip.type.%player%} is "null":
+		if {ip.type.%player%} isn't set:
 			set {ip.type.%player%} to "uni"
 			send "{@prefix} &aVous êtes maintenant en connexion par &a&lIP Unique&a."
 			set {ip.pl.%player%} to "%ip of player%"
@@ -65,7 +65,7 @@ command /§unique:
 
 command /§dyna:
 	trigger:
-		if {ip.type.%player%} is "null":
+		if {ip.type.%player%} isn't set:
 			set {ip.type.%player%} to "dyna"
 			send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
 			wait 1 second
@@ -88,7 +88,7 @@ on join:
 
 			else if {ip.type.%player%} is "dyna":
 				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
-			else if {ip.type.%player%} is "null":
+			else if {ip.type.%player%} isn't set:
 				wait 1 second
 				make player execute command "§ip"
 
@@ -125,7 +125,7 @@ command /ipp [<text>] [<offline player>]:
 				if arg 2 is set:
 					if {ip.type.%arg 2%} is "uni" or "dyna":
 						send "{@prefix}  &cVous venez de réinitialiser la protection de %arg 2%." to player
-						set {ip.type.%arg 2%} to "null"
+						clear {ip.type.%arg 2%}
 						if arg 2 is online:
 							kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
 					else: 
@@ -229,3 +229,8 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 		else:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
+
+
+#Patch Note => Passe de la variable "{ip.type.%player%}" en is null et pas is "null" (Suppression de mémoire) on vérifie si elle est pas encore SET !
+
+#Pourquoi avoir fait ça ? Pour évitez que une personne ayant la variable nomme "null" à sa second join sois pas pris en compte par le système
