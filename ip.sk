@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.7" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.8" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -23,7 +23,17 @@ on load:
 	send "&8" to console
 	send "&8&m-------------------------" to console
 
-	
+
+on join:
+	if player has permission "*":
+		wait 2 seconds
+		send "&8"
+		send "&8&m-----------------------------"
+		send "&8"
+		make console execute command "tellraw %player% {text:""&8[&cIP&7-&cProtect&8] &c• &e&nUne mise à jour arrive il vous faudra TuSKe ! &c• "",clickEvent:{action:suggest_command,value:""https://www.mediafire.com/file/635z8uv78salrq5/TuSKe.jar/file""},hoverEvent:{action:show_text,value:""&cClique Ici !""}}"
+		send "&8"
+		send "&8&m-----------------------------"
+
 
 on first join:
 	clear {ip.type.%player%}
@@ -85,6 +95,7 @@ on join:
 
 					wf "[IP-Protect | %now% ] || Joueur: %player% || Status: IP Unique || Raison: Connexion suspecte détecté." to "plugins/IP-Protect/Command.log"
 					wf " " to "plugins/IP-Protect/Command.log"
+					stop
 
 			else if {ip.type.%player%} is "dyna":
 				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
