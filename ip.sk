@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "2.8" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "2.9" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
@@ -23,7 +23,6 @@ on load:
 	send "&8" to console
 	send "&8&m-------------------------" to console
 
-
 on join:
 	if player has permission "*":
 		wait 2 seconds
@@ -33,7 +32,6 @@ on join:
 		make console execute command "tellraw %player% {text:""&8[&cIP&7-&cProtect&8] &c• &e&nUne mise à jour arrive il vous faudra TuSKe ! &c• "",clickEvent:{action:suggest_command,value:""https://www.mediafire.com/file/635z8uv78salrq5/TuSKe.jar/file""},hoverEvent:{action:show_text,value:""&cClique Ici !""}}"
 		send "&8"
 		send "&8&m-----------------------------"
-
 
 on first join:
 	clear {ip.type.%player%}
@@ -45,42 +43,9 @@ on first join:
 #		set {ip.type.%player%} to "null"
 #		kick player due to "{@prefix} &cMerci de vous reconnecter."
 
-command /§ip:
-	trigger:
-		open chest with 1 rows named "&c&lSécurisation par IP" to player
-		wait 2 ticks
-		format slot 0 of player with black stained glass named "&8" to be unstealable
-		format slot 1 of player with black stained glass named "&8" to be unstealable
-		format slot 2 of player with emerald named "&aIP Unique" with lore "&eCela signifie que vous ne pourrez pas vous connecter si votre ip change !" to close then run [make player execute command "§unique"]
-		format slot 3 of player with black stained glass named "&8" to be unstealable
-		format slot 4 of player with black stained glass named "&8" to be unstealable
-		format slot 5 of player with diamond named "&cIP Multiple" with lore "&bAvec ceci n'importe qui aura accès au compte avec le mdp même si ce n'est pas vous !" to close then run [make player execute command "§dyna"]
-		format slot 6 of player with black stained glass named "&8" to be unstealable
-		format slot 7 of player with black stained glass named "&8" to be unstealable
-		format slot 8 of player with black stained glass named "&8" to be unstealable
-		wait 15 seconds
-		if {ip.type.%player%} isn't set:
-			kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
-		
-
-command /§unique:
-	trigger:
-		if {ip.type.%player%} isn't set:
-			set {ip.type.%player%} to "uni"
-			send "{@prefix} &aVous êtes maintenant en connexion par &a&lIP Unique&a."
-			set {ip.pl.%player%} to "%ip of player%"
-			wait 1 second
-			kick player due to "{@prefix} &cMerci de vous reconnecter."
-	
-
-command /§dyna:
-	trigger:
-		if {ip.type.%player%} isn't set:
-			set {ip.type.%player%} to "dyna"
-			send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
-			wait 1 second
-			kick player due to "{@prefix} &cMerci de vous reconnecter."
-
+on close inventory:
+	if {ip.type.%player%} isn't set:
+		kick player due to "{@prefix} &cMerci de choisir une sécurité de connexion !"
 
 on join:
 	loop all players:
@@ -101,7 +66,34 @@ on join:
 				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
 			else if {ip.type.%player%} isn't set:
 				wait 1 second
-				make player execute command "§ip"
+				open virtual chest inventory with size 1 named "&c&lSécurisation par IP" to player
+				wait 2 ticks
+				format gui slot 0 of player with black stained glass named "&8" 
+				format gui slot 1 of player with black stained glass named "&8" 
+				format gui slot 2 of player with emerald named "&aIP Unique" with lore "&eCela signifie que vous ne pourrez pas vous connecter si votre ip change !" to run:
+					if {ip.type.%player%} isn't set:
+						set {ip.type.%player%} to "uni"
+						send "{@prefix} &aVous êtes maintenant en connexion par &a&lIP Unique&a."
+						set {ip.pl.%player%} to "%ip of player%"
+						close player's inventory
+						wait 1 second
+						kick player due to "{@prefix} &cMerci de vous reconnecter."
+				format gui slot 3 of player with black stained glass named "&8" 
+				format gui slot 4 of player with black stained glass named "&8" 
+				format gui slot 5 of player with diamond named "&cIP Multiple" with lore "&bAvec ceci n'importe qui aura accès au compte avec le mdp même si ce n'est pas vous !" to run:
+					if {ip.type.%player%} isn't set:
+						set {ip.type.%player%} to "dyna"
+						send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
+						close player's inventory
+						wait 1 second
+						kick player due to "{@prefix} &cMerci de vous reconnecter."
+				format gui slot 6 of player with black stained glass named "&8" 
+				format gui slot 7 of player with black stained glass named "&8" 
+				format gui slot 8 of player with black stained glass named "&8"
+				wait 15 seconds
+				if {ip.type.%player%} isn't set:
+					kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
+		
 
 on connect:
 	if player has permission "*":
@@ -242,4 +234,4 @@ command /ipp [<text>] [<offline player>]:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
 
 
-#Patch Note => Ajout de la prévention de mise à jours pour passer par le menu de TuSKe et pas SKQuery https://skript-mc.fr/forum/files/file/487-ip-protect/#
+#Patch Note => Modification du menu de choix en passant par TuSKe à la place de SKQuery (Execute directement sans passer par les commande "§")#
