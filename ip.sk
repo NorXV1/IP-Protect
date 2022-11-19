@@ -242,6 +242,4 @@ command /ipp [<text>] [<offline player>]:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
 
 
-#Patch Note => Passe de la variable "{ip.type.%player%}" en is null et pas is "null" (Suppression de mémoire) on vérifie si elle est pas encore SET !
-
-#Pourquoi avoir fait ça ? Pour évitez que une personne ayant la variable nomme "null" à sa second join sois pas pris en compte par le système
+#Patch Note => Ajout de la prévention de mise à jours pour passer par le menu de TuSKe et pas SKQuery https://skript-mc.fr/forum/files/file/487-ip-protect/#
