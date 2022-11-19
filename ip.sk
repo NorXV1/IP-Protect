@@ -1,15 +1,19 @@
 options:
 	prefix: &8[&cIP&7-&cProtect&8] &6➡
 	prefixa: &8[&cIP&7-&cProtect &3[ADMIN]&8] &6➡
+
 on load:
 	create file "plugins/IP-Protect/config.yml"
+
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
+
 	set "Update.Version" to "2.8" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
 	if file "plugins/IP-Protect/Command.log" doesn't exists: 
 		create file "plugins/IP-Protect/Command.log"
+
 	send "&8&m-------------------------" to console
 	send "&8" to console
 	send "&f     ┌ &8[&cIP&7-&cProtect&8] &f┐" to console
@@ -18,7 +22,8 @@ on load:
 	send "&6  Skript Dev par RavenS" to console
 	send "&8" to console
 	send "&8&m-------------------------" to console
-	
+
+
 on join:
 	if player has permission "*":
 		wait 2 seconds
@@ -29,13 +34,17 @@ on join:
 		send "&8"
 		send "&8&m-----------------------------"
 
+
 on first join:
 	clear {ip.type.%player%}
 	clear {ip.pl.%player%} #Juste pour l'IP Unique
+
+
 #on connect:
 #	if {ip.type.%player%} isn't set:
 #		set {ip.type.%player%} to "null"
 #		kick player due to "{@prefix} &cMerci de vous reconnecter."
+
 command /§ip:
 	trigger:
 		open chest with 1 rows named "&c&lSécurisation par IP" to player
@@ -53,6 +62,7 @@ command /§ip:
 		if {ip.type.%player%} isn't set:
 			kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
 		
+
 command /§unique:
 	trigger:
 		if {ip.type.%player%} isn't set:
@@ -62,6 +72,7 @@ command /§unique:
 			wait 1 second
 			kick player due to "{@prefix} &cMerci de vous reconnecter."
 	
+
 command /§dyna:
 	trigger:
 		if {ip.type.%player%} isn't set:
@@ -69,6 +80,8 @@ command /§dyna:
 			send "{@prefix} &cVous êtes maintenant en connexion par &c&lIP Dynamique&a."
 			wait 1 second
 			kick player due to "{@prefix} &cMerci de vous reconnecter."
+
+
 on join:
 	loop all players:
 		if loop-player has permission "login.chat":
@@ -79,14 +92,17 @@ on join:
 					wait 1 second
 					kick player due to "{@prefix} &cVous n'avez pas la bonne IP de connexion."
 					send "{@prefix} &cUne connexion suspecte c'est effectué sur le compte de %player% &7[ &aIP Unique &7] &8- &7[ &c%now% &7]" to loop-player
+
 					wf "[IP-Protect | %now% ] || Joueur: %player% || Status: IP Unique || Raison: Connexion suspecte détecté." to "plugins/IP-Protect/Command.log"
 					wf " " to "plugins/IP-Protect/Command.log"
 					stop
+
 			else if {ip.type.%player%} is "dyna":
 				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
 			else if {ip.type.%player%} isn't set:
 				wait 1 second
 				make player execute command "§ip"
+
 on connect:
 	if player has permission "*":
 		wait 3 seconds
@@ -101,6 +117,8 @@ on connect:
 			send "&f"
 			send "{@prefix} &aAucune mise à jour disponible."
 			send "&f"
+
+
 command /ipp [<text>] [<offline player>]:
 	trigger:
 		if player is op:
@@ -160,25 +178,45 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefix} &aAucune mise à jour disponible."
 			if arg 1 is "config":
 				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+
 				set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+
 				set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+
 				wait 1 tick
+
 				message "&8&m---------------"
+
 				message "&8"
+
 				message "&f┌ &8[&cIP&7-&cProtect&8] &f┐"
+
 				message "&8"
+
 				message "&8"
+
 				if {_update} is "true":
+
 					message "&l&6   Update: &a%{_update}%"
+
 				else if {_update} is "false":
+
 					message "&l&6   Update: &c%{_update}%"
+
 				message "&8"
+
 				if {_version} = {_ver}: 
+
 					message "&l&6   Version: &a%{_version}%"
+
 				else:
+
 					message "&l&6   Version: &c%{_version}%"
+
 				message "&8"
+
 				message "&8&m---------------"
+
 			if arg 1 is "true":
 				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
 				if {_update} is "true":
@@ -202,5 +240,6 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 		else:
 			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
+
 
 #Patch Note => Ajout de la prévention de mise à jours pour passer par le menu de TuSKe et pas SKQuery https://skript-mc.fr/forum/files/file/487-ip-protect/#
