@@ -246,6 +246,6 @@ command /ipp [<text>] [<offline player>]:
 					wait 2 seconds
 					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 		else:
-			send "{@prefix} &cVous ne possedez pas les permission nécessaire."
+			send "{@prefix} &cVous ne possedez pas les permissions nécessaire."
 
 #Patch Note => Modification du menu de choix en passant par TuSKe à la place de SKQuery (Execute directement sans passer par les commande "§") + Ajout du /ipp wipe <mdp> et changement des varibles stockable en liste
