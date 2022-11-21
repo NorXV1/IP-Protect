@@ -48,7 +48,6 @@ on first join:
 	clear {ip.pl::%player%} #Juste pour l'IP Unique
 
 on close inventory:
-	if {ip.type.%player%} isn't set:
 	if {ip.type::%player%} isn't set:
 		kick player due to "{@prefix} &cMerci de choisir une sécurité de connexion !"
 
