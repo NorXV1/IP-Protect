@@ -32,17 +32,6 @@ on load:
 			set {mdp} to join {_result::*}
 		set "Update.Mdp Wipe" to join {_result::*} in yaml file "plugins/IP-Protect/config.yml"
 
-
-on join:
-	if player has permission "*":
-		wait 2 seconds
-		send "&8"
-		send "&8&m-----------------------------"
-		send "&8"
-		make console execute command "tellraw %player% {text:""&8[&cIP&7-&cProtect&8] &c• &e&nUne mise à jour arrive il vous faudra TuSKe ! &c• "",clickEvent:{action:suggest_command,value:""https://www.mediafire.com/file/635z8uv78salrq5/TuSKe.jar/file""},hoverEvent:{action:show_text,value:""&cClique Ici !""}}"
-		send "&8"
-		send "&8&m-----------------------------"
-
 on first join:
 	clear {ip.type::%player%}
 	clear {ip.pl::%player%} #Juste pour l'IP Unique
