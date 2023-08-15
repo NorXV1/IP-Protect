@@ -207,6 +207,8 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&l&6   Update: &a%{_update}%"
 
+				message "&8"
+
 			else if {_update} is "false":
 
 				message "&l&6   Update: &c%{_update}%"
@@ -221,9 +223,9 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&l&6   Version: &c%{_version}%"
 
-				message "&8"
+			message "&8"
 
-				message "&8&m---------------"
+			message "&8&m---------------"
 
 		if arg 1 is "true":
 			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
