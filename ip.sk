@@ -7,7 +7,7 @@ on load:
 
 	wf "## Configuration Skript IP-Protect" to "plugins/IP-Protect/config.yml"
 
-	set "Update.Version" to "3.0" in yaml file "plugins/IP-Protect/config.yml"
+	set "Update.Version" to "3.1" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	set {value.mdp} to single value "Wipe.Update Password" get of "plugins/IP-Protect/config.yml"	
 	wait 2 seconds
@@ -145,8 +145,8 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefix}  &cVous venez de réinitialiser la protection de %arg 2%." to player
 					clear {ip.type.%arg 2%}
 					clear {ip.type::%arg 2%}
-					if arg 2 is online:
-						kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
+				if arg 2 is online:
+					kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
 				else: 
 					send "{@prefix} &cN'as pas encore fait ses premier pas."
 			else:
@@ -182,26 +182,26 @@ command /ipp [<text>] [<offline player>]:
 							send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
 					else:
 						send "{@prefix} &cLe système de mise à jour est désactivé !" 
-				else:
-					send "{@prefix} &aAucune mise à jour disponible."
-			if arg 1 is "config":
-				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+			else:
+				send "{@prefix} &aAucune mise à jour disponible."
+		if arg 1 is "config":
+			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
 
-				set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+			set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
 
-				set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+			set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
 
-				wait 1 tick
+			wait 1 tick
 
-				message "&8&m---------------"
+			message "&8&m---------------"
 
-				message "&8"
+			message "&8"
 
-				message "&f┌ &8[&cIP&7-&cProtect&8] &f┐"
+			message "&f┌ &8[&cIP&7-&cProtect&8] &f┐"
 
-				message "&8"
+			message "&8"
 
-				message "&8"
+			message "&8"
 
 			if {_update} is "true":
 
@@ -225,79 +225,79 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&8&m---------------"
 
-			if arg 1 is "true":
-				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
-				if {_update} is "true":
-					send "{@prefix} &cLe système  d'Update est déjà en true."
+		if arg 1 is "true":
+			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+			if {_update} is "true":
+				send "{@prefix} &cLe système  d'Update est déjà en true."
+			else:
+				set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
+				send "{@prefix} &aVous venez de modifier la config de update en true."
+		if arg 1 is "false":
+			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+			if {_update} is "false":
+				send "{@prefix} &cLe système d'Update est déjà en false."
+			else:
+				set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
+				send "{@prefix} &aVous venez de modifier la config de update en false."
+		if arg 1 is "wipe":
+			set {_mdp} to single value "Wipe.Password" get of "plugins/IP-Protect/config.yml"
+			if arg 2 is "%{_mdp}%":
+				if player is op:
+					send "{@prefix} &cVous venez de faire un wipe de toute les données de connexion des joueurs !" to player
+					wait 2 seconds
+					delete {ip.pl::*}
+					delete {ip.type::*}
+					kick all players due to "{@prefix} &cVos compte ont été réinitialiser !"
 				else:
-					set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
-					send "{@prefix} &aVous venez de modifier la config de update en true."
-			if arg 1 is "false":
-				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+					send "{@prefix} &cTu n'es pas OP" to player
+			else:
+				send "{@prefix} &cPas ou Mauvais mot de passe ! &8(&7Il se trouve dans le IP-Protect/config.yml&8)"
+		if arg 1 is "menu" or "gui":
+			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+			set {value.mdp} to single value "Wipe.Update Password" get of "plugins/IP-Protect/config.yml"	
+			open virtual chest inventory with size 1 named "&c&lIP-Protect Config" to player
+		if {_update} is "false":
+			format gui slot 2 of player with red wool named "&7Mise à jour &8: &cDésactivé" with lore "&8Clique Droit||&8Pour activer" to run:
+			if {_update} is "true":
+				send "{@prefix} &cLe système d'Update est déjà en true."
+			else:
+				close player's inventory
+				set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
+				send "{@prefix} &aVous venez de modifier la config de update en true."
+		else if {_update} is "true":
+			format gui slot 2 of player with green wool named "&7Mise à jour &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
 				if {_update} is "false":
-					send "{@prefix} &cLe système d'Update est déjà en false."
+					send "{@prefix} &cLe système  d'Update est déjà en false."
 				else:
+					close player's inventory
 					set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
 					send "{@prefix} &aVous venez de modifier la config de update en false."
-			if arg 1 is "wipe":
-				set {_mdp} to single value "Wipe.Password" get of "plugins/IP-Protect/config.yml"
-				if arg 2 is "%{_mdp}%":
-					if player is op:
-						send "{@prefix} &cVous venez de faire un wipe de toute les données de connexion des joueurs !" to player
-						wait 2 seconds
-						delete {ip.pl::*}
-						delete {ip.type::*}
-						kick all players due to "{@prefix} &cVos compte ont été réinitialiser !"
-					else:
-						send "{@prefix} &cTu n'es pas OP" to player
-				else:
-					send "{@prefix} &cPas ou Mauvais mot de passe ! &8(&7Il se trouve dans le IP-Protect/config.yml&8)"
-			if arg 1 is "menu" or "gui":
-				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
-				set {value.mdp} to single value "Wipe.Update Password" get of "plugins/IP-Protect/config.yml"	
-				open virtual chest inventory with size 3 named "&c&lIP-Protect Config" to player
-				if {_update} is "false":
-					format gui slot 2 of player with red wool named "&7Mise à jour &8: &cDésactivé" with lore "&8Clique Droit||&8Pour activer" to run:
-						if {_update} is "true":
-							send "{@prefix} &cLe système d'Update est déjà en true."
-						else:
-							close player's inventory
-							set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
-							send "{@prefix} &aVous venez de modifier la config de update en true."
-				else if {_update} is "true":
-					format gui slot 2 of player with green wool named "&7Mise à jour &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
-						if {_update} is "false":
-							send "{@prefix} &cLe système  d'Update est déjà en false."
-						else:
-							close player's inventory
-							set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
-							send "{@prefix} &aVous venez de modifier la config de update en false."
-				if {value.mdp} is "false":
-					format gui slot 6 of player with red wool named "&7Update Auto Wipe Password &8: &cDésactivé" with lore "&8Clique Droit||&8Pour Activer" to run:
-						set "Wipe.Update Password" to "true" in yaml file "plugins/IP-Protect/config.yml"
-						close player's inventory
-						send "{@prefix} &cVous venez d'activer le renouvellement automatique du mot de passe &eWIPE &c!"
-				else if {value.mdp} is "true":
-					format gui slot 6 of player with green wool named "&7Update Auto Wipe Password &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
-						set "Wipe.Update Password" to "false" in yaml file "plugins/IP-Protect/config.yml"
-						close player's inventory
-						send "{@prefix} &cVous venez de désactiver le renouvellement automatique du mot de passe &eWIPE &c!"
-				format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "left" click:
-					close player's inventory
-					make player execute command "sk reload ip"
-					wait 2 seconds
-					send "{@prefix} &cSkript Reload"
-				format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "right" click:
-					close player's inventory
-					make console execute command "sk reload ip"
-					wait 2 seconds
-					send "{@prefix} &cSkript Reload"
-			if arg 1 isn't set:
-				if player isn't op:
-					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
-				else:
-					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
-					wait 2 seconds
-					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
+		if {value.mdp} is "false":
+			format gui slot 6 of player with red wool named "&7Update Auto Wipe Password &8: &cDésactivé" with lore "&8Clique Droit||&8Pour Activer" to run:
+				set "Wipe.Update Password" to "true" in yaml file "plugins/IP-Protect/config.yml"
+				close player's inventory
+				send "{@prefix} &cVous venez d'activer le renouvellement automatique du mot de passe &eWIPE &c!"
+		else if {value.mdp} is "true":
+			format gui slot 6 of player with green wool named "&7Update Auto Wipe Password &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
+				set "Wipe.Update Password" to "false" in yaml file "plugins/IP-Protect/config.yml"
+				close player's inventory
+				send "{@prefix} &cVous venez de désactiver le renouvellement automatique du mot de passe &eWIPE &c!"
+			format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "left" click:
+				close player's inventory
+				make player execute command "sk reload ip"
+				wait 2 seconds
+				send "{@prefix} &cSkript Reload"
+			format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "right" click:
+				close player's inventory
+				make console execute command "sk reload ip"
+				wait 2 seconds
+				send "{@prefix} &cSkript Reload"
+		if arg 1 isn't set:
+			if player isn't op:
+				send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+			else:
+				send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
+				wait 2 seconds
+				send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
 
 #Patch Note 3.0 => Ajout Possibilité d'executer les commandes /ipp par la console (Raison: si ton ip change sans le vouloir et que tu es en Unique.)#
