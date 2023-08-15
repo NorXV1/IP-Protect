@@ -9,10 +9,16 @@ on load:
 
 	set "Update.Version" to "2.9" in yaml file "plugins/IP-Protect/config.yml"
 	set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
+	set {value.mdp} to single value "Wipe.Update Password" get of "plugins/IP-Protect/config.yml"	
+	wait 2 seconds
+	if {value.mdp} is "false":
+		set "Wipe.Update Password" to "false" in yaml file "plugins/IP-Protect/config.yml"
+	else if {value.mdp} is "true":
+		set "Wipe.Update Password" to "true" in yaml file "plugins/IP-Protect/config.yml"
 	if folder "plugins/IP-Protect" doesn't exists: 
 		create folder "plugins/IP-Protect"
-	if file "plugins/IP-Protect/Command.log" doesn't exists: 
-		create file "plugins/IP-Protect/Command.log"
+	if file "plugins/IP-Protect/Log.log" doesn't exists: 
+		create file "plugins/IP-Protect/Log.log"
 
 	send "&8&m-------------------------" to console
 	send "&8" to console
@@ -23,14 +29,23 @@ on load:
 	send "&8" to console
 	send "&8&m-------------------------" to console
 
-	if {mdp} isn't set:
+	if {value.mdp} is "false":	
+		if {mdp} isn't set:
+			set {_validChars::*} to split "abcdefghijklmnopqrstuvxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$%%?!=##$@&~" at ""
+			loop 10 times:
+				set {_pick} to random element of {_validChars::*}
+				remove {_pick} from {_validChars::*}
+				add {_pick} to {_result::*}
+				set {mdp} to join {_result::*}
+			set "Wipe.Password" to join {_result::*} in yaml file "plugins/IP-Protect/config.yml"
+	else if {value.mdp} is "true":
 		set {_validChars::*} to split "abcdefghijklmnopqrstuvxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$%%?!=##$@&~" at ""
 		loop 10 times:
 			set {_pick} to random element of {_validChars::*}
 			remove {_pick} from {_validChars::*}
 			add {_pick} to {_result::*}
 			set {mdp} to join {_result::*}
-		set "Update.Mdp Wipe" to join {_result::*} in yaml file "plugins/IP-Protect/config.yml"
+		set "Wipe.Password" to join {_result::*} in yaml file "plugins/IP-Protect/config.yml"
 
 on first join:
 	clear {ip.type::%player%}
@@ -60,7 +75,7 @@ on join:
 					send "{@prefix} &cUne connexion suspecte c'est effectué sur le compte de %player% &7[ &aIP Unique &7] &8- &7[ &c%now% &7]" to loop-player
 
 					wf "[IP-Protect | %now% ] || Joueur: %player% || Status: IP Unique || Raison: Connexion suspecte détecté." to "plugins/IP-Protect/Command.log"
-					wf " " to "plugins/IP-Protect/Command.log"
+					wf " " to "plugins/IP-Protect/Log.log"
 					stop
 			else if {ip.type::%player%} is "dyna":
 				send "{@prefix} &cVous ne possedez pas de sécurité. Bon jeu."
@@ -94,7 +109,6 @@ on join:
 				if {ip.type::%player%} isn't set:
 					kick player due to "{@prefix} &cVous avez mis trop de temps à choisir."
 		
-
 on connect:
 	if player has permission "*":
 		wait 3 seconds
@@ -110,61 +124,62 @@ on connect:
 			send "{@prefix} &aAucune mise à jour disponible."
 			send "&f"
 
-
 command /ipp [<text>] [<offline player>]:
+	executable by: console, player
+	permission: ipp.use.admin
+	permission message: {@prefix} &cVous ne possedez pas les permissions nécessaire.
 	trigger:
-		if player is op:
-			if arg 1 is "show":
-				if arg 2 is set:
-					if {ip.type::%arg 2%} is "uni":
-						send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Unique."
-					else if {ip.type::%arg 2%} is "dyna":
-						send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Dynamique."
-					else if {ip.type::%arg 2%} isn't set:
-						send "{@prefix} &e%arg 2% &cn'est pas encore venu faire ses premier pas."
-				else:
-					send "{@prefix} &cVeuillez choisir un personne." 
-			if arg 1 is "reset":
-				if arg 2 is set:
-					if {ip.type::%arg 2%} is "uni" or "dyna":
-						send "{@prefix}  &cVous venez de réinitialiser la protection de %arg 2%." to player
-						clear {ip.type.%arg 2%}
-						clear {ip.type::%arg 2%}
-						if arg 2 is online:
-							kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
-					else: 
-						send "{@prefix} &cN'as pas encore fait ses premier pas."
-				else:
-					send "{@prefix} &cVous devez choisir une personne."
-			if arg 1 is "rl":
-				execute console command "/sk reload ip"
-				wait 2 seconds
-				send "{@prefix} &aSkript IP-Protect Reload avec succès."
-			if arg 1 is "maj":
-				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
-				set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
-				set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
-				if {_ver} is not "%{_version}%":
-					if {_update} = "true":
-						if file "plugins/Skript/scripts/ip.sk" exists:
-							send "{@prefix} &eMise à jour en cours !"
-							delete file "plugins/IP-Protect/config.yml"
-							delete file "plugins/Skript/scripts/ip.sk" 
-							wait 5 ticks
-							create file "plugins/Skript/scripts/ip.sk"
-							download from "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ip.sk" to "plugins/Skript/scripts/ip.sk"
-							wait 5 seconds
-							execute console command "/sk reload /ip.sk"
-							wait 2 seconds
-							send "{@prefix} &bVérification en cours..."
-							wait 1 second
-							set {_version.maj} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
-							set {_ver.maj} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
-							wait 2 ticks
-							if {_ver.maj} = {_version.maj}:			
-								send "{@prefix} &6Mise à jour terminé !"
-							else:
-								send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
+		if arg 1 is "show":
+			if arg 2 is set:
+				if {ip.type::%arg 2%} is "uni":
+					send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Unique."
+				else if {ip.type::%arg 2%} is "dyna":
+					send "{@prefix} &cVoici le status de %arg 2% &e➜ &aIP Dynamique."
+				else if {ip.type::%arg 2%} isn't set:
+					send "{@prefix} &e%arg 2% &cn'est pas encore venu faire ses premier pas."
+			else:
+				send "{@prefix} &cVeuillez choisir un personne." 
+		if arg 1 is "reset":
+			if arg 2 is set:
+				if {ip.type::%arg 2%} is "uni" or "dyna":
+					send "{@prefix}  &cVous venez de réinitialiser la protection de %arg 2%." to player
+					clear {ip.type.%arg 2%}
+					clear {ip.type::%arg 2%}
+					if arg 2 is online:
+						kick arg 2 due to "{@prefix} &cVotre sécurisation a été réinitialiser veuillez vous reconnecter."
+				else: 
+					send "{@prefix} &cN'as pas encore fait ses premier pas."
+			else:
+				send "{@prefix} &cVous devez choisir une personne."
+		if arg 1 is "rl":
+			execute console command "/sk reload ip"
+			wait 2 seconds
+			send "{@prefix} &aSkript IP-Protect Reload avec succès."
+		if arg 1 is "maj":
+			set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+			set {_version} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+			set {_ver} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+			if {_ver} is not "%{_version}%":
+				if {_update} = "true":
+					if file "plugins/Skript/scripts/ip.sk" exists:
+						send "{@prefix} &eMise à jour en cours !"
+						delete file "plugins/IP-Protect/config.yml"
+						delete file "plugins/Skript/scripts/ip.sk" 
+						wait 5 ticks
+						create file "plugins/Skript/scripts/ip.sk"
+						download from "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ip.sk" to "plugins/Skript/scripts/ip.sk"
+						wait 5 seconds
+						execute console command "/sk reload /ip.sk"
+						wait 2 seconds
+						send "{@prefix} &bVérification en cours..."
+						wait 1 second
+						set {_version.maj} to single value "Update.Version" get of "plugins/IP-Protect/config.yml"
+						set {_ver.maj} to line 1 from url "https://raw.githubusercontent.com/NorXV1/IP-Protect/main/ver"
+						wait 2 ticks
+						if {_ver.maj} = {_version.maj}:			
+							send "{@prefix} &6Mise à jour terminé !"
+						else:
+							send "{@prefix} &cUne erreur c'est produite durant la mise à jour. Merci de réessayer plus tard."
 					else:
 						send "{@prefix} &cLe système de mise à jour est désactivé !" 
 				else:
@@ -188,23 +203,23 @@ command /ipp [<text>] [<offline player>]:
 
 				message "&8"
 
-				if {_update} is "true":
+			if {_update} is "true":
 
-					message "&l&6   Update: &a%{_update}%"
+				message "&l&6   Update: &a%{_update}%"
 
-				else if {_update} is "false":
+			else if {_update} is "false":
 
-					message "&l&6   Update: &c%{_update}%"
+				message "&l&6   Update: &c%{_update}%"
 
 				message "&8"
 
-				if {_version} = {_ver}: 
+			if {_version} = {_ver}: 
 
-					message "&l&6   Version: &a%{_version}%"
+				message "&l&6   Version: &a%{_version}%"
 
-				else:
+			else:
 
-					message "&l&6   Version: &c%{_version}%"
+				message "&l&6   Version: &c%{_version}%"
 
 				message "&8"
 
@@ -225,7 +240,7 @@ command /ipp [<text>] [<offline player>]:
 					set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
 					send "{@prefix} &aVous venez de modifier la config de update en false."
 			if arg 1 is "wipe":
-				set {_mdp} to single value "Update.Mdp Wipe" get of "plugins/IP-Protect/config.yml"
+				set {_mdp} to single value "Wipe.Password" get of "plugins/IP-Protect/config.yml"
 				if arg 2 is "%{_mdp}%":
 					if player is op:
 						send "{@prefix} &cVous venez de faire un wipe de toute les données de connexion des joueurs !" to player
@@ -237,7 +252,46 @@ command /ipp [<text>] [<offline player>]:
 						send "{@prefix} &cTu n'es pas OP" to player
 				else:
 					send "{@prefix} &cPas ou Mauvais mot de passe ! &8(&7Il se trouve dans le IP-Protect/config.yml&8)"
-					
+			if arg 1 is "menu" or "gui":
+				set {_update} to single value "Update.Update" get of "plugins/IP-Protect/config.yml"
+				set {value.mdp} to single value "Wipe.Update Password" get of "plugins/IP-Protect/config.yml"	
+				open virtual chest inventory with size 3 named "&c&lIP-Protect Config" to player
+				if {_update} is "false":
+					format gui slot 2 of player with red wool named "&7Mise à jour &8: &cDésactivé" with lore "&8Clique Droit||&8Pour activer" to run:
+						if {_update} is "true":
+							send "{@prefix} &cLe système d'Update est déjà en true."
+						else:
+							close player's inventory
+							set "Update.Update" to "true" in yaml file "plugins/IP-Protect/config.yml"
+							send "{@prefix} &aVous venez de modifier la config de update en true."
+				else if {_update} is "true":
+					format gui slot 2 of player with green wool named "&7Mise à jour &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
+						if {_update} is "false":
+							send "{@prefix} &cLe système  d'Update est déjà en false."
+						else:
+							close player's inventory
+							set "Update.Update" to "false" in yaml file "plugins/IP-Protect/config.yml"
+							send "{@prefix} &aVous venez de modifier la config de update en false."
+				if {value.mdp} is "false":
+					format gui slot 6 of player with red wool named "&7Update Auto Wipe Password &8: &cDésactivé" with lore "&8Clique Droit||&8Pour Activer" to run:
+						set "Wipe.Update Password" to "true" in yaml file "plugins/IP-Protect/config.yml"
+						close player's inventory
+						send "{@prefix} &cVous venez d'activer le renouvellement automatique du mot de passe &eWIPE &c!"
+				else if {value.mdp} is "true":
+					format gui slot 6 of player with green wool named "&7Update Auto Wipe Password &8: &aActivée" with lore "&8Clique Droit||&8Pour Désactiver" to run:
+						set "Wipe.Update Password" to "false" in yaml file "plugins/IP-Protect/config.yml"
+						close player's inventory
+						send "{@prefix} &cVous venez de désactiver le renouvellement automatique du mot de passe &eWIPE &c!"
+				format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "left" click:
+					close player's inventory
+					make player execute command "sk reload ip"
+					wait 2 seconds
+					send "{@prefix} &cSkript Reload"
+				format gui slot 22 of player with orange wool named "&6Reload IP-Protect" with lore "&7Clique Gauche (Player)||&7Clique Droit (Console)" to run with "right" click:
+					close player's inventory
+					make console execute command "sk reload ip"
+					wait 2 seconds
+					send "{@prefix} &cSkript Reload"
 			if arg 1 isn't set:
 				if player isn't op:
 					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
@@ -245,7 +299,5 @@ command /ipp [<text>] [<offline player>]:
 					send "{@prefix} &cFaite /ipp &eshow &f/ &ereset &bPlayer"
 					wait 2 seconds
 					send "{@prefixa} &c/ipp &etrue &f/ &efalse &f/ &econfig &f/ &emaj &f/ &erl"
-		else:
-			send "{@prefix} &cVous ne possedez pas les permissions nécessaire."
 
-#Patch Note => Modification du menu de choix en passant par TuSKe à la place de SKQuery (Execute directement sans passer par les commande "§") + Ajout du /ipp wipe <mdp> et changement des varibles stockable en liste
+#Patch Note 3.0 => Ajout Possibilité d'executer les commandes /ipp par la console (Raison: si ton ip change sans le vouloir et que tu es en Unique.)#
